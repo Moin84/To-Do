@@ -1,0 +1,57 @@
+{% extends 'todos/base.html' %}
+
+{% block title %}
+<title>Todo list</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- title row -->
+    <div class="row" style="display: flex; justify-content: center;">
+        <div class="md-2 col-lg-9">
+            <div class="page-header" style="display: flex; justify-content: center;">
+                <h1 style= "text-align: center; font-family: 'Courier New', monospace, sans-serif;" >
+                    Todo List
+                </h1>
+            </div>
+        </div>
+    </div>
+
+  <!-- Add a todo row -->
+    <div class="row" style="display: flex; justify-content: center; font-family: 'Courier New', monospace, sans-serif; width: 100%;">
+      <div class="col-md-6 col-lg-6" style="display: flex; justify-content: center;">
+        <form method="post" action="{% url 'App_ToDo:add' %}" style="width: 100%; max-width: 400px;">
+          {% csrf_token %}
+          <div class="form-row d-flex align-items-center" style="gap: 5px;"> <!-- Decreased gap -->
+            <input type="text" class="form-control" name="title" placeholder="Add your works" required style="flex: 1;"> <!-- Takes available space -->
+            <button type="submit" name="submit" class="btn btn-outline-primary">
+              Add
+            </button>
+          </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<!-- todo list row -->
+<div class="row justify-content-center" style="font-family: 'Courier New', monospace, sans-serif;">
+    <div class="col-md-8 col-lg-6" style="margin-left: -10px;"> <!-- Shifts form slightly left -->
+        <div class="list-group">
+            {% for todo in todo_list %}
+            <div class="list-group-item d-flex align-items-center justify-content-between {% if todo.isCompleted %} todo-complete {% endif %}">
+                <form style="display: inline; " method="post" action="{% url 'App_ToDo:update' todo.id %}">
+                    {% csrf_token %}
+                    <input type="checkbox" name="isCompleted" onchange="this.form.submit()" {% if todo.isCompleted %} checked {% endif %} class="todo-status-checkbox"                      title="{% if not todo.isCompleted %} mark as done {% else %} mark undone {% endif %}">
+                </form>
+                <span class="ms-2 flex-grow-1">{{ todo.title }}</span> <!-- Keeps text left-aligned -->
+                <a href="{% url 'App_ToDo:delete' todo.id %}" title="Delete">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
